@@ -10,11 +10,11 @@ class Book extends Component {
         }
     }
 
-    getCover =  (book) => {
-        if(book.imageLinks && book.imageLinks.smallThumbnail)
+    getCover = (book) => {
+        if (book.imageLinks && book.imageLinks.smallThumbnail)
             return book.imageLinks.smallThumbnail
         else
-            return book.infoLink
+            return book.id
     }
 
     render() {
@@ -22,12 +22,15 @@ class Book extends Component {
         return (
             <div className="book">
                 <div className="book-top">
-                    <div className="book-cover" style={{ width: 130, height: 190, backgroundImage: `url(${ this.getCover(book) })` }}></div>
+                    <div className="book-cover" style={{ width: 130, height: 190, backgroundImage: `url(${this.getCover(book)})` }}></div>
                     <div className="book-shelf-changer">
-                        <select onChange={(e) => {
-                            this.props.changeShelf(e, book)
-                        }}>
-                            <option value="move" isdisabled='true'>Move to...</option>
+                        <select
+                            onChange={(e) => {
+                                this.props.changeShelf(e, book)
+                            }}
+                            value={book.shelf || 'none'}
+                            >
+                            <option value="move" disabled={true}>Move to...</option>
                             <option value="currentlyReading">Currently Reading</option>
                             <option value="wantToRead">Want to Read</option>
                             <option value="read">Read</option>
@@ -37,7 +40,7 @@ class Book extends Component {
                 </div>
                 <div className="book-title">{book.title}</div>
                 {
-                    
+
                     this.printAuthors(book)
 
                 }

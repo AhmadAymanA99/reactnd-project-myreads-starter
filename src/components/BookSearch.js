@@ -11,37 +11,66 @@ class BookSearch extends Component {
     }
 
     search = (query) => {
+        let searchBooks
+        let res = []
         BooksAPI.search(query)
-            .then(async (books) => {
-                await this.setState({
-                    books,
-                    flag: 1
-                })
-                //await console.log(books)
+            .then((boos) => {
+                searchBooks = boos
+                BooksAPI.getAll()
+                    .then((books) => {
+                        //console.log('searchBooks', searchBooks)
+                        //console.log('books', books)
+                        if (!searchBooks.error) {
+                            searchBooks.filter(book => {
+                                books.filter(b => (book.id === b.id) ? (res.push(b)) : console.log('no'))
+                                res.push(book)
+                                return 1
+                            })
+
+                            //console.log(res)
+
+                            for (let i = 0; i < res.length; i++) {
+                                for (let j = 0; j < res.length; j++) {
+                                    if(res[i].id === res[j].id && !res[i].shelf && res[j].shelf)
+                                        res.splice(i, 1)
+                                }
+                            }
+                            
+                            //console.log(res)
+
+                            this.setState({
+                                books: res,
+                                flag: 1
+                            })
+
+                        }
+                        else{
+                            this.setState({
+                                books: '',
+                                flag: 1
+                            })
+                        }
+                    })
             })
     }
 
-    onSearch = (P) => {
-        //console.log('promise', P)
+    onSearch = () => {
         return this.checkSearch()
     }
 
     checkSearch = () => {
         const Books = this.state.books
         if (this.state.searchQuery === '') {
-            //console.log('empty')
             return (
                 <div><h3>Enter Search Query</h3></div>
             )
         }
-        else if (!Books || Books.error) {
-            //console.log('no')
+        else if (Books === '') {
             return (
                 <div><h3>NO RESULTS</h3></div>
             )
         }
         else if (Books && Books.length > 0) {
-            //console.log('okay')
             return (
                 Books.map((book) =>
                     <li key={book.id}>
@@ -52,13 +81,11 @@ class BookSearch extends Component {
     }
 
     changeShelf = (e, book) => {
-
         BooksAPI.update(book, e.target.value)
         book.shelf = e.target.value
         this.state.books.filter(bo =>
             this.setState({ books: [...this.state.books] })
         )
-
     }
 
     render() {
@@ -76,13 +103,10 @@ class BookSearch extends Component {
                                     event.target.value
                             },
                                 () => {
-                                    //console.log('Query :', this.state.searchQuery)
-
                                     if (this.state.searchQuery !== '') {
                                         this.search(this.state.searchQuery)
                                     }
                                     else {
-                                        //console.log(2)
                                     }
                                 })
                             }
@@ -97,7 +121,7 @@ class BookSearch extends Component {
                     <ol className="books-grid">
                         {
                             this.state.flag === 1 ?
-                                this.onSearch() : <h3>Enter Search Query</h3>//console.log('h')
+                                this.onSearch() : <h3>Enter Search Query</h3>
                         }
                     </ol>
                 </div>

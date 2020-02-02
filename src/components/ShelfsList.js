@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import Shelf from './Shelf'
-
 import * as BooksAPI from '../BooksAPI'
 
 class BooksLibrary extends Component {
@@ -24,13 +23,11 @@ class BooksLibrary extends Component {
     }
 
     changeShelf = (e, book) => {
-
         BooksAPI.update(book, e.target.value)
         book.shelf = e.target.value
         this.state.books.filter(bo =>
             this.setState({ books: [...this.state.books] })
         )
-
     }
 
     render() {
